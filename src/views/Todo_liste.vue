@@ -1,7 +1,7 @@
 <script setup>
 </script>
 
-<template>
+<template >
     <div>This is your Todo liste</div>
     <form action="" @submit.prevent="ajouter_element">
       <fieldset role="group">
@@ -13,7 +13,7 @@
       <div v-else>
         <ul>
           <li 
-          v-for="todo in todos"
+          v-for="todo in sortedTodos()"
           :key="todo.date"
           :class="{completed :  todo.completed}"
           > 
@@ -24,12 +24,17 @@
             </input>
           </li>
         </ul>
+        <label>
+          <input type="checkbox" v-model="hideCompleted">
+          Masquer les tàches complétés
+        </label>
       </div>
 </template>
 <script setup>
 import { ref } from 'vue'
 
 //const todos = ref([])
+//initial todos for exemple
 const todos = ref([ {
   title : 'tache de test',
   completed : true,
@@ -42,7 +47,9 @@ const todos = ref([ {
 ])
 
 const newtodo = ref("")
+const hideCompleted = ref(false)
 
+// to add todos in the liste
 const ajouter_element = () => {
   todos.value.push({
     title : newtodo.value,
@@ -52,6 +59,20 @@ const ajouter_element = () => {
   newtodo.value=""
 }
 
+// I call this function to put todos in the bottom when they're done (checked)
+// and hide checked todos
+const sortedTodos = () => {
+
+  const sortedTodos = todos.value.toSorted( (a,b) => a.completed > b.completed ? 1 : -1)
+
+  if (hideCompleted.value == true)
+    return sortedTodos.filter( t => t.completed == false)
+
+    return sortedTodos
+
+}
+
+
 </script>
 
 <style>
@@ -59,6 +80,9 @@ const ajouter_element = () => {
   opacity: 0.5;
   text-decoration: line-through;
 }
-
+.section {
+  background-color: var(--pico-background-color);
+  color: var(--pico-color);
+}
 
 </style>
